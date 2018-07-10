@@ -18,6 +18,10 @@ $ cfa get example.com a
 $ cfa delete example.com a
 ```
 
+### Limitations
+
+- Only supports one record per name and type combination
+
 ## License
 
 © [silverwind](https://github.com/silverwind), distributed under BSD licence
