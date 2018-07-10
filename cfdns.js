@@ -26,7 +26,7 @@ const cmds = {
 
 const [cmd, ...params] = args._;
 if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== cmds[cmd]) {
-  console.info(`usage: cfa [options] command [args]
+  console.info(`usage: cfdns [options] command [args]
 
   Commands:
     login <email> <key>                 Log in to the API
@@ -40,10 +40,10 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== c
     -h, --help                          Print this help
 
   Example:
-    $ cfa login user@example.com 4c689aa3462a44a121c1f199c1081240b9be4
-    $ cfa update example.com a 1.2.3.4 120
-    $ cfa get example.com a
-    $ cfa delete example.com a`);
+    $ cfdns login user@example.com 4c689aa3462a44a121c1f199c1081240b9be4
+    $ cfdns update example.com a 1.2.3.4 120
+    $ cfdns get example.com a
+    $ cfdns delete example.com a`);
   exit();
 }
 
@@ -65,7 +65,7 @@ async function req(method, path, body) {
 
 (async () => {
   const fs = require("fs-extra");
-  const rcfile = require("path").join(require("os").homedir(), ".cfarc");
+  const rcfile = require("path").join(require("os").homedir(), ".cfdnsrc");
 
   if (cmd === "login" || cmd === "logout") {
     if (cmd === "login") {

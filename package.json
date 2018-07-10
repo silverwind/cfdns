@@ -1,9 +1,9 @@
 {
-  "name": "cfa",
-  "version": "1.1.1",
-  "description": "CLI to modify DNS records via the Cloudflare v4 API",
+  "name": "cfdns",
+  "version": "0.1.0",
+  "description": "CLI to modify DNS records hosted on Cloudflare",
   "author": "silverwind <me@silverwind.io>",
-  "repository": "silverwind/cfa",
+  "repository": "silverwind/cfdns",
   "license": "BSD-2-Clause",
   "scripts": {
     "test": "make test"
@@ -12,10 +12,10 @@
     "node": ">=8"
   },
   "bin": {
-    "cfa": "cfa.js"
+    "cfdns": "cfdns.js"
   },
   "files": [
-    "cfa.js"
+    "cfdns.js"
   ],
   "keywords": [
     "cloudflare",
