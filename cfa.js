@@ -86,7 +86,7 @@ async function req(method, path, body) {
     try {
       ({email, key} = JSON.parse(await fs.readFile(rcfile)));
     } catch (err) {
-      exit("Account data not found, please log in first.");
+      exit("Login data not found, please log in first.");
     }
   }
 
