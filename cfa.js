@@ -86,7 +86,7 @@ async function req(method, path, body) {
 
   if (params[1]) params[1] = params[1].toUpperCase();
   const [name, type, content, ttl] = params;
-  const zones = (await req("get", "zones")).map(zone => {return {id: zone.id, name: zone.name}; });
+  const zones = await req("get", "zones");
   const zone = zones.find(zone => name.endsWith(zone.name));
   if (!zone) exit("No matching zone found");
 
