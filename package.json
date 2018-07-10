@@ -12,7 +12,7 @@
     "node": ">=8"
   },
   "files": [
-    "index.js"
+    "cfa.js"
   ],
   "keywords": [
     "cloudflare",
