@@ -29,8 +29,8 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== c
   console.info(`usage: cfa [options] command [args]
 
   Commands:
-    login <email> <key>
-    logout
+    login <email> <key>                 Log in to the API
+    logout                              Log out from the API
     get <name> <type>                   Retrieve a DNS record
     update <name> <type> <value> <ttl>  Create or update a DNS record
     delete <name> <type>                Delete a DNS record
