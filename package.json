@@ -1,0 +1,36 @@
+{
+  "name": "cfa",
+  "version": "0.1.0",
+  "description": "CLI to interface with the Cloudflare v4 API",
+  "author": "silverwind <me@silverwind.io>",
+  "repository": "silverwind/cfa",
+  "license": "BSD-2-Clause",
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "cloudflare",
+    "api",
+    "update",
+    "dns",
+    "record",
+    "ddns"
+  ],
+  "dependencies": {
+    "fs-extra": "^6.0.1",
+    "minimist": "^1.2.0",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^5.1.0",
+    "eslint-config-silverwind": "^1.0.43",
+    "updates": "^3.0.1"
+  }
+}
