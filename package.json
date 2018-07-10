@@ -1,6 +1,6 @@
 {
   "name": "cfa",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CLI to modify DNS records via the Cloudflare v4 API",
   "author": "silverwind <me@silverwind.io>",
   "repository": "silverwind/cfa",
