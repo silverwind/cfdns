@@ -11,6 +11,9 @@
   "engines": {
     "node": ">=8"
   },
+  "bin": {
+    "cfa": "cfa.js"
+  },
   "files": [
     "cfa.js"
   ],
