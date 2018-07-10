@@ -1,7 +1,7 @@
 # cfa
 [![](https://img.shields.io/npm/v/cfa.svg?style=flat)](https://www.npmjs.org/package/cfa) [![](https://img.shields.io/npm/dm/cfa.svg)](https://www.npmjs.org/package/cfa) [![](https://api.travis-ci.org/silverwind/cfa.svg?style=flat)](https://travis-ci.org/silverwind/cfa)
 
-> CLI to interface with the Cloudflare v4 API
+> CLI to modify DNS records via the Cloudflare v4 API
 
 ## Install
 
