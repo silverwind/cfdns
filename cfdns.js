@@ -30,10 +30,10 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== c
 
   Commands:
     login <email> <key>                 Log in to the API
-    logout                              Log out from the API
     get <name> <type>                   Retrieve a DNS record
-    update <name> <type> <value> <ttl>  Create or update a DNS record
-    delete <name> <type>                Delete a DNS record
+    set <name> <type> <value> [<ttl>]   Create or update a DNS record
+    del <name> <type>                   Delete a DNS record
+    logout                              Log out from the API
 
   Options:
     -v, --version                       Print the version
@@ -41,9 +41,9 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== c
 
   Example:
     $ cfdns login user@example.com 4c689aa3462a44a121c1f199c1081240b9be4
-    $ cfdns update example.com a 1.2.3.4 120
+    $ cfdns set example.com a 1.2.3.4 120
     $ cfdns get example.com a
-    $ cfdns delete example.com a`);
+    $ cfdns del example.com a`);
   exit();
 }
 
@@ -91,7 +91,8 @@ async function req(method, path, body) {
   }
 
   if (params[1]) params[1] = params[1].toUpperCase();
-  const [name, type, content, ttl] = params;
+  let [name, type, content, ttl] = params;
+  if (!ttl) ttl = 120;
   const zones = await req("get", "zones");
   const zone = zones.find(zone => name.endsWith(zone.name));
   if (!zone) exit("No matching zone found");
@@ -99,7 +100,7 @@ async function req(method, path, body) {
   const record = (await req("get", `zones/${zone.id}/dns_records?name=${name}&type=${type}`))[0];
   if (cmd === "get") {
     console.info(record);
-  } else if (cmd === "update") {
+  } else if (cmd === "set" || cmd === "add") {
     if (record) {
       if (content !== record.content || ttl !== record.ttl) {
         await req("put", `zones/${zone.id}/dns_records/${record.id}`, {
@@ -115,7 +116,7 @@ async function req(method, path, body) {
       });
       console.info(`Created ${name} ${ttl} IN ${type} ${content}`);
     }
-  } else if (cmd === "delete") {
+  } else if (cmd === "del") {
     if (record) {
       await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
       console.info(`Deleted ${name} ${record.ttl} IN ${type} ${record.content}`);

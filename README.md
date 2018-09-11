@@ -11,11 +11,25 @@ $ npm i -g cfdns
 
 ## Usage
 
-```bash
-$ cfdns login user@example.com 4c689aa3462a44a121c1f199c1081240b9be4
-$ cfdns update example.com a 1.2.3.4 120
-$ cfdns get example.com a
-$ cfdns delete example.com a
+```
+usage: cfdns [options] command [args]
+
+  Commands:
+    login <email> <key>                 Log in to the API
+    get <name> <type>                   Retrieve a DNS record
+    set <name> <type> <value> [<ttl>]   Create or update a DNS record
+    del <name> <type>                   Delete a DNS record
+    logout                              Log out from the API
+
+  Options:
+    -v, --version                       Print the version
+    -h, --help                          Print this help
+
+  Example:
+    $ cfdns login user@example.com 4c689aa3462a44a121c1f199c1081240b9be4
+    $ cfdns set example.com a 1.2.3.4 120
+    $ cfdns get example.com a
+    $ cfdns del example.com a
 ```
 
 ### Limitations
