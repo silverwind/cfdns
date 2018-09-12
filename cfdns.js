@@ -2,8 +2,21 @@
 "use strict";
 
 const args = require("minimist")(process.argv.slice(2), {
-  boolean: ["v", "version", "h", "help"],
-  alias: {v: "version", h: "help"},
+  boolean: [
+    "c", "color",
+    "h", "help",
+    "n", "no-color",
+    "v", "version",
+  ],
+  string: [
+    "_",
+  ],
+  alias: {
+    c: "color",
+    h: "help",
+    n: "no-color",
+    v: "version",
+  },
 });
 
 function exit(err) {
@@ -17,15 +30,17 @@ if (args.version) {
 }
 
 const cmds = {
-  login: 2,
-  logout: 0,
-  get: 2,
-  update: 4,
-  delete: 2,
+  login: [2, 2],
+  logout: [0, 0],
+  get: [2, 2],
+  set: [3, 4],
+  add: [3, 4],
+  del: [2, 2],
 };
 
 const [cmd, ...params] = args._;
-if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== cmds[cmd]) {
+const paramLengthOkay = cmd && cmds[cmd] && (params.length >= cmds[cmd][0] && params.length <= cmds[cmd][1]);
+if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || !paramLengthOkay) {
   console.info(`usage: cfdns [options] command [args]
 
   Commands:
@@ -36,6 +51,8 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== c
     logout                              Log out from the API
 
   Options:
+    -c, --color                         Force-enable color output
+    -n, --no-color                      Disable color output
     -v, --version                       Print the version
     -h, --help                          Print this help
 
@@ -48,6 +65,8 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || params.length !== c
 }
 
 const request = require("request-promise-native");
+const chalk = require("chalk");
+
 let email, key;
 
 async function req(method, path, body) {
@@ -72,13 +91,13 @@ async function req(method, path, body) {
       [email, key] = params;
       await fs.writeFile(rcfile, JSON.stringify({email, key}));
       await fs.chmod(rcfile, 0o600);
-      console.info("Login data saved");
+      console.info("login data saved");
     } else {
       try {
         await fs.unlink(rcfile);
-        console.info("Login data deleted");
+        console.info("login data deleted");
       } catch (err) {
-        console.info("No login data found");
+        console.info("no login data found");
       }
     }
     exit();
@@ -86,16 +105,17 @@ async function req(method, path, body) {
     try {
       ({email, key} = JSON.parse(await fs.readFile(rcfile)));
     } catch (err) {
-      exit("Login data not found, please log in first.");
+      exit("login data not found, please log in first.");
     }
   }
 
   if (params[1]) params[1] = params[1].toUpperCase();
   let [name, type, content, ttl] = params;
   if (!ttl) ttl = 120;
+  if (typeof ttl === "string") ttl = Number(ttl);
   const zones = await req("get", "zones");
   const zone = zones.find(zone => name.endsWith(zone.name));
-  if (!zone) exit("No matching zone found");
+  if (!zone) exit("no matching zone found");
 
   const record = (await req("get", `zones/${zone.id}/dns_records?name=${name}&type=${type}`))[0];
   if (cmd === "get") {
@@ -106,20 +126,20 @@ async function req(method, path, body) {
         await req("put", `zones/${zone.id}/dns_records/${record.id}`, {
           name, type, content, ttl, proxied: record.proxied
         });
-        console.info(`Updated ${name} ${ttl} IN ${type} ${content}`);
+        console.info(`updated ${chalk.magenta(name)} ${ttl} IN ${type} ${chalk.green(content)}`);
       } else {
-        console.info(`${name} is up to date`);
+        console.info(`${chalk.magenta(name)} is up to date`);
       }
     } else {
       await req("post", `zones/${zone.id}/dns_records`, {
         name, type, content, ttl, proxied: false
       });
-      console.info(`Created ${name} ${ttl} IN ${type} ${content}`);
+      console.info(`created ${chalk.magenta(name)} ${ttl} IN ${type} ${chalk.green(content)}`);
     }
   } else if (cmd === "del") {
     if (record) {
       await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
-      console.info(`Deleted ${name} ${record.ttl} IN ${type} ${record.content}`);
+      console.info(`created ${chalk.magenta(name)} ${record.ttl} IN ${type} ${chalk.green(record.content)}`);
     }
   }
   exit();
