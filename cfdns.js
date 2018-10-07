@@ -139,7 +139,7 @@ async function req(method, path, body) {
   } else if (cmd === "del") {
     if (record) {
       await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
-      console.info(`created ${chalk.magenta(name)} ${record.ttl} IN ${type} ${chalk.green(record.content)}`);
+      console.info(`deleted ${chalk.magenta(name)} ${record.ttl} IN ${type} ${chalk.green(record.content)}`);
     }
   }
   exit();
