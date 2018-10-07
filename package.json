@@ -1,6 +1,6 @@
 {
   "name": "cfdns",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "CLI to modify DNS records hosted on Cloudflare",
   "author": "silverwind <me@silverwind.io>",
   "repository": "silverwind/cfdns",
