@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	pnpm exec eslint --color --quiet *.js
+	pnpm exec eslint --color .
 
 .PHONY: publish
 publish:

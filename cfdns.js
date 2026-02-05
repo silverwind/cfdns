@@ -1,7 +1,15 @@
 #!/usr/bin/env node
-"use strict";
+import minimist from "minimist";
+import request from "request-promise-native";
+import chalk from "chalk";
+import fs from "fs-extra";
+import {join} from "node:path";
+import {homedir} from "node:os";
+import {readFileSync} from "node:fs";
 
-const args = require("minimist")(process.argv.slice(2), {
+const pkg = JSON.parse(readFileSync(new URL("package.json", import.meta.url)));
+
+const args = minimist(process.argv.slice(2), {
   boolean: [
     "c", "color",
     "h", "help",
@@ -25,7 +33,7 @@ function exit(err) {
 }
 
 if (args.version) {
-  console.info(require("./package.json").version);
+  console.info(pkg.version);
   exit();
 }
 
@@ -64,9 +72,6 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || !paramLengthOkay) {
   exit();
 }
 
-const request = require("request-promise-native");
-const chalk = require("chalk");
-
 let email, key;
 
 async function req(method, path, body) {
@@ -83,8 +88,7 @@ async function req(method, path, body) {
 }
 
 (async () => {
-  const fs = require("fs-extra");
-  const rcfile = require("path").join(require("os").homedir(), ".cfdnsrc");
+  const rcfile = join(homedir(), ".cfdnsrc");
 
   if (cmd === "login" || cmd === "logout") {
     if (cmd === "login") {
@@ -96,7 +100,7 @@ async function req(method, path, body) {
       try {
         await fs.unlink(rcfile);
         console.info("login data deleted");
-      } catch (err) {
+      } catch {
         console.info("no login data found");
       }
     }
@@ -104,7 +108,7 @@ async function req(method, path, body) {
   } else {
     try {
       ({email, key} = JSON.parse(await fs.readFile(rcfile)));
-    } catch (err) {
+    } catch {
       exit("login data not found, please log in first.");
     }
   }
@@ -136,11 +140,9 @@ async function req(method, path, body) {
       });
       console.info(`created ${chalk.magenta(name)} ${ttl} IN ${type} ${chalk.green(content)}`);
     }
-  } else if (cmd === "del") {
-    if (record) {
-      await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
-      console.info(`deleted ${chalk.magenta(name)} ${record.ttl} IN ${type} ${chalk.green(record.content)}`);
-    }
+  } else if (cmd === "del" && record) {
+    await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
+    console.info(`deleted ${chalk.magenta(name)} ${record.ttl} IN ${type} ${chalk.green(record.content)}`);
   }
   exit();
 })();

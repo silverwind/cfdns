@@ -4,6 +4,7 @@
   "description": "CLI to modify DNS records hosted on Cloudflare",
   "author": "silverwind <me@silverwind.io>",
   "repository": "silverwind/cfdns",
+  "type": "module",
   "license": "BSD-2-Clause",
   "scripts": {
     "test": "make test"
@@ -35,8 +36,9 @@
     "ver": "3.0.0"
   },
   "devDependencies": {
-    "eslint": "^5.6.1",
-    "eslint-config-silverwind": "^2.0.9",
+    "eslint": "^9.39.2",
+    "eslint-config-silverwind": "^120.1.2",
+    "typescript-config-silverwind": "14.0.0",
     "updates": "^4.5.2"
   }
 }
