@@ -1,32 +1,32 @@
 .PHONY: test
 test:
-	npx eslint --color --quiet *.js
+	pnpm exec eslint --color --quiet *.js
 
 .PHONY: publish
 publish:
 	git push -u --tags origin master
-	npm publish
+	pnpm publish
 
 .PHONY: update
 update:
-	npx updates -u
+	pnpm exec updates -u
 	rm -rf node_modules
-	npm i
+	pnpm install
 
 .PHONY: patch
 patch:
 	$(MAKE) test
-	npx ver patch
+	pnpm exec ver patch
 	$(MAKE) publish
 
 .PHONY: minor
 minor:
 	$(MAKE) test
-	npx ver minor
+	pnpm exec ver minor
 	$(MAKE) publish
 
 .PHONY: major
 major:
 	$(MAKE) test
-	npx ver major
+	pnpm exec ver major
 	$(MAKE) publish
