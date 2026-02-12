@@ -5,7 +5,7 @@ test:
 .PHONY: publish
 publish:
 	git push -u --tags origin master
-	pnpm publish
+	pnpm publish --no-git-checks
 
 .PHONY: update
 update:
