@@ -3,8 +3,7 @@ test:
 	pnpm exec eslint --color .
 
 .PHONY: publish
-publish:
-	git push -u --tags origin master
+publish: node_modules
 	pnpm publish --no-git-checks
 
 .PHONY: update
