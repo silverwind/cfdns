@@ -16,16 +16,16 @@ update:
 patch:
 	$(MAKE) test
 	pnpm exec ver patch
-	$(MAKE) publish
+	git push -u --tags origin master
 
 .PHONY: minor
 minor:
 	$(MAKE) test
 	pnpm exec ver minor
-	$(MAKE) publish
+	git push -u --tags origin master
 
 .PHONY: major
 major:
 	$(MAKE) test
 	pnpm exec ver major
-	$(MAKE) publish
+	git push -u --tags origin master
