@@ -1,6 +1,13 @@
+.PHONY: lint
+lint:
+	pnpm exec eslint-silverwind --color .
+
+.PHONY: lint-fix
+lint-fix:
+	pnpm exec eslint-silverwind --color . --fix
+
 .PHONY: test
-test:
-	pnpm exec eslint --color .
+test: lint
 
 .PHONY: publish
 publish: node_modules
