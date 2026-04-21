@@ -1,5 +1,5 @@
 # cfdns
-[![](https://img.shields.io/npm/v/cfdns.svg?style=flat)](https://www.npmjs.org/package/cfdns) [![](https://img.shields.io/npm/dm/cfdns.svg)](https://www.npmjs.org/package/cfdns) [![](https://api.travis-ci.org/silverwind/cfdns.svg?style=flat)](https://travis-ci.org/silverwind/cfdns)
+[![](https://img.shields.io/npm/v/cfdns.svg?style=flat)](https://www.npmjs.org/package/cfdns) [![](https://img.shields.io/npm/dm/cfdns.svg)](https://www.npmjs.org/package/cfdns) [![](https://packagephobia.com/badge?p=cfdns)](https://packagephobia.com/result?p=cfdns) [![](https://api.travis-ci.org/silverwind/cfdns.svg?style=flat)](https://travis-ci.org/silverwind/cfdns)
 
 > CLI to modify DNS records hosted on Cloudflare
 
