@@ -1,31 +1,36 @@
 #!/usr/bin/env node
-import minimist from "minimist";
-import chalk from "chalk";
+import {parseArgs, styleText, type ParseArgsConfig} from "node:util";
 import {join} from "node:path";
 import {homedir} from "node:os";
 import {readFile, writeFile, chmod, unlink} from "node:fs/promises";
 import {argv, exit as processExit} from "node:process";
 import pkg from "./package.json" with {type: "json"};
 
-const args = minimist(argv.slice(2), {
-  boolean: [
-    "c", "color",
-    "h", "help",
-    "n", "no-color",
-    "v", "version",
-  ],
-  string: [
-    "_",
-  ],
-  alias: {
-    c: "color",
-    h: "help",
-    n: "no-color",
-    v: "version",
+function parseArgv<T extends ParseArgsConfig>(config: T): ReturnType<typeof parseArgs<T>> {
+  try {
+    return parseArgs(config);
+  } catch (err) {
+    return exit((err as Error).message);
+  }
+}
+
+const {values: args, positionals} = parseArgv({
+  args: argv.slice(2),
+  options: {
+    color: {type: "boolean", short: "c"},
+    help: {type: "boolean", short: "h"},
+    "no-color": {type: "boolean", short: "n"},
+    version: {type: "boolean", short: "v"},
   },
+  allowPositionals: true,
+  strict: true,
 });
 
-function exit(err?: string) {
+function color(format: Parameters<typeof styleText>[0], text: string): string {
+  return args["no-color"] ? text : styleText(format, text, {validateStream: !args.color});
+}
+
+function exit(err?: string): never {
   if (err) console.info(`Error: ${err}`);
   processExit(err ? 1 : 0);
 }
@@ -44,7 +49,7 @@ const cmds: Record<string, [number, number]> = {
   del: [2, 2],
 };
 
-const [cmd, ...params] = args._;
+const [cmd, ...params] = positionals;
 const paramLengthOkay = cmd && cmds[cmd] && (params.length >= cmds[cmd][0] && params.length <= cmds[cmd][1]);
 if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || !paramLengthOkay) {
   console.info(`usage: cfdns [options] command [args]
@@ -135,27 +140,27 @@ const zones: Array<Zone> = await req("get", "zones");
 const zone = zones.find(zone => name.endsWith(zone.name));
 if (!zone) exit("no matching zone found");
 
-const record: DnsRecord | undefined = (await req("get", `zones/${zone!.id}/dns_records?name=${name}&type=${type}`))[0];
+const record: DnsRecord | undefined = (await req("get", `zones/${zone.id}/dns_records?name=${name}&type=${type}`))[0];
 if (cmd === "get") {
   console.info(record);
 } else if (cmd === "set" || cmd === "add") {
   if (record) {
     if (content !== record.content || ttl !== record.ttl) {
-      await req("put", `zones/${zone!.id}/dns_records/${record.id}`, {
+      await req("put", `zones/${zone.id}/dns_records/${record.id}`, {
         name, type, content, ttl, proxied: record.proxied,
       });
-      console.info(`updated ${chalk.magenta(name)} ${ttl} IN ${type} ${chalk.green(content)}`);
+      console.info(`updated ${color("magenta", name)} ${ttl} IN ${type} ${color("green", content)}`);
     } else {
-      console.info(`${chalk.magenta(name)} is up to date`);
+      console.info(`${color("magenta", name)} is up to date`);
     }
   } else {
-    await req("post", `zones/${zone!.id}/dns_records`, {
+    await req("post", `zones/${zone.id}/dns_records`, {
       name, type, content, ttl, proxied: false,
     });
-    console.info(`created ${chalk.magenta(name)} ${ttl} IN ${type} ${chalk.green(content)}`);
+    console.info(`created ${color("magenta", name)} ${ttl} IN ${type} ${color("green", content)}`);
   }
 } else if (cmd === "del" && record) {
-  await req("delete", `zones/${zone!.id}/dns_records/${record.id}`);
-  console.info(`deleted ${chalk.magenta(name)} ${record.ttl} IN ${type} ${chalk.green(record.content)}`);
+  await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
+  console.info(`deleted ${color("magenta", name)} ${record.ttl} IN ${type} ${color("green", record.content)}`);
 }
 exit();

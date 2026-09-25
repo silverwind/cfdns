@@ -22,6 +22,8 @@ usage: cfdns [options] command [args]
     logout                              Log out from the API
 
   Options:
+    -c, --color                         Force-enable color output
+    -n, --no-color                      Disable color output
     -v, --version                       Print the version
     -h, --help                          Print this help
 
