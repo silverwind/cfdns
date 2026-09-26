@@ -50,8 +50,8 @@ const cmds: Record<string, [number, number]> = {
 };
 
 const [cmd, ...params] = positionals;
-const paramLengthOkay = cmd && cmds[cmd] && (params.length >= cmds[cmd][0] && params.length <= cmds[cmd][1]);
-if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || !paramLengthOkay) {
+const paramLengthOkay = cmd && cmds[cmd] && params.length >= cmds[cmd][0] && params.length <= cmds[cmd][1];
+if (args.help || !paramLengthOkay) {
   console.info(`usage: cfdns [options] command [args]
 
   Commands:
@@ -77,16 +77,15 @@ if (!cmd || args.help || !Object.keys(cmds).includes(cmd) || !paramLengthOkay) {
 
 let email: string, key: string;
 
-/** Perform an authenticated request against the Cloudflare API and return its `result`. */
 async function req(method: string, path: string, body?: unknown) {
   const res = await fetch(`https://api.cloudflare.com/client/v4/${path}`, {
-    method: method.toUpperCase(),
+    method,
     headers: {
       "Content-Type": "application/json",
       "X-Auth-Email": email,
       "X-Auth-Key": key,
     },
-    body: body === undefined ? undefined : JSON.stringify(body),
+    body: JSON.stringify(body),
   });
   const json = await res.json();
   if (!res.ok) {
@@ -132,21 +131,20 @@ if (cmd === "login" || cmd === "logout") {
   }
 }
 
-if (params[1]) params[1] = params[1].toUpperCase();
-let [name, type, content, ttl] = params as [string, string, string, string | number];
-if (!ttl) ttl = 120;
-if (typeof ttl === "string") ttl = Number(ttl);
-const zones: Array<Zone> = await req("get", "zones");
+const [name, rawType, content, rawTtl] = params;
+const type = rawType.toUpperCase();
+const ttl = rawTtl ? Number(rawTtl) : 120;
+const zones: Array<Zone> = await req("GET", "zones");
 const zone = zones.find(zone => name.endsWith(zone.name));
 if (!zone) exit("no matching zone found");
 
-const record: DnsRecord | undefined = (await req("get", `zones/${zone.id}/dns_records?name=${name}&type=${type}`))[0];
+const record: DnsRecord | undefined = (await req("GET", `zones/${zone.id}/dns_records?name=${name}&type=${type}`))[0];
 if (cmd === "get") {
   console.info(record);
 } else if (cmd === "set" || cmd === "add") {
   if (record) {
     if (content !== record.content || ttl !== record.ttl) {
-      await req("put", `zones/${zone.id}/dns_records/${record.id}`, {
+      await req("PUT", `zones/${zone.id}/dns_records/${record.id}`, {
         name, type, content, ttl, proxied: record.proxied,
       });
       console.info(`updated ${color("magenta", name)} ${ttl} IN ${type} ${color("green", content)}`);
@@ -154,13 +152,13 @@ if (cmd === "get") {
       console.info(`${color("magenta", name)} is up to date`);
     }
   } else {
-    await req("post", `zones/${zone.id}/dns_records`, {
+    await req("POST", `zones/${zone.id}/dns_records`, {
       name, type, content, ttl, proxied: false,
     });
     console.info(`created ${color("magenta", name)} ${ttl} IN ${type} ${color("green", content)}`);
   }
 } else if (cmd === "del" && record) {
-  await req("delete", `zones/${zone.id}/dns_records/${record.id}`);
+  await req("DELETE", `zones/${zone.id}/dns_records/${record.id}`);
   console.info(`deleted ${color("magenta", name)} ${record.ttl} IN ${type} ${color("green", record.content)}`);
 }
 exit();
