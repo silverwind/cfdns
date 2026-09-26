@@ -19,15 +19,13 @@ lint-fix: node_modules
 	pnpm exec tsgo
 
 .PHONY: test
-test: node_modules build
-	@true
+test: node_modules
 
 .PHONY: build
 build: node_modules $(DIST_FILES)
 
 $(DIST_FILES): $(SOURCE_FILES) pnpm-lock.yaml package.json tsdown.config.ts
 	pnpm exec tsdown
-	chmod +x $(DIST_FILES)
 
 .PHONY: publish
 publish: node_modules
@@ -43,10 +41,10 @@ update-js: node_modules
 	pnpm install
 	@touch node_modules
 
-.PHONY: patch minor major
-patch minor major: node_modules lint test
-	pnpm exec versions -R $@ package.json
-
 .PHONY: update-actions
 update-actions: node_modules
 	pnpm exec updates -u -M actions
+
+.PHONY: patch minor major
+patch minor major: node_modules lint test
+	pnpm exec versions -R $@ package.json
