@@ -134,8 +134,12 @@ if (cmd === "login" || cmd === "logout") {
 const [name, rawType, content, rawTtl] = params;
 const type = rawType.toUpperCase();
 const ttl = rawTtl ? Number(rawTtl) : 120;
-const zones: Array<Zone> = await req("GET", "zones");
-const zone = zones.find(zone => name.endsWith(zone.name));
+let zone: Zone | undefined;
+for (let page = 1; !zone; page++) {
+  const zones: Array<Zone> = await req("GET", `zones?per_page=50&page=${page}`);
+  zone = zones.find(zone => name === zone.name || name.endsWith(`.${zone.name}`));
+  if (zones.length < 50) break;
+}
 if (!zone) exit("no matching zone found");
 
 const record: DnsRecord | undefined = (await req("GET", `zones/${zone.id}/dns_records?name=${name}&type=${type}`))[0];
