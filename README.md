@@ -1,15 +1,16 @@
 # cfdns
-[![](https://img.shields.io/npm/v/cfdns.svg?style=flat)](https://www.npmjs.org/package/cfdns) [![](https://img.shields.io/npm/dm/cfdns.svg)](https://www.npmjs.org/package/cfdns) [![](https://packagephobia.com/badge?p=cfdns)](https://packagephobia.com/result?p=cfdns) [![](https://api.travis-ci.org/silverwind/cfdns.svg?style=flat)](https://travis-ci.org/silverwind/cfdns)
+[![](https://img.shields.io/npm/v/cfdns.svg?style=flat)](https://www.npmjs.org/package/cfdns) [![](https://img.shields.io/npm/dm/cfdns.svg)](https://www.npmjs.org/package/cfdns) [![](https://packagephobia.com/badge?p=cfdns)](https://packagephobia.com/result?p=cfdns)
 
 > CLI to modify DNS records hosted on Cloudflare
 
-## Install
+## Usage
 
 ```sh
-$ npm i -g cfdns
+pnpm dlx cfdns login user@example.com 4c689aa3462a44a121c1f199c1081240b9be4
+pnpm dlx cfdns set example.com a 1.2.3.4 120
 ```
 
-## Usage
+## Options
 
 ```
 usage: cfdns [options] command [args]
@@ -34,10 +35,6 @@ usage: cfdns [options] command [args]
     $ cfdns del example.com a
 ```
 
-### Limitations
-
-- Only supports one record per name and type combination
-
-## License
+Only one record per name and type combination is supported.
 
 © [silverwind](https://github.com/silverwind), distributed under BSD licence
